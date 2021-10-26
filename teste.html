@@ -19,11 +19,10 @@
       </section>
 
     <script>
-    const header = document.querySelector('header');
-    const section = document.querySelector('section');
-
-    
-    $(document).on('change', '.file-upload-button', function(event) {
+const header = document.querySelector('header');
+const section = document.querySelector('section');
+var jsonPronto = "";
+$(document).on('change', '.file-upload-button', function(event) {
       var reader = new FileReader();
 
       reader.onload = function(event) {
@@ -31,76 +30,60 @@
         var produtos = jsonObj.products;
         var categorias = jsonObj.categories;
         var estabelecimentos = jsonObj.establishments;
-        var listaProdutosEstab = [];
+        var listaProdutosEstab = "{";
 
         for (var i = 0; i < estabelecimentos.length; i++) {
 
-          listaProdutosEstab.push(buscaProdutos(estabelecimentos[i].productsId, produtos));
+          listaProdutosEstab += buscaProdutos(estabelecimentos[i].name, estabelecimentos[i].productsId, produtos, categorias) + ",";
 
         }
-      alert(listaProdutosEstab);
+        listaProdutosEstab = listaProdutosEstab.substring(0, listaProdutosEstab.length - 1);
+        listaProdutosEstab += "}";
+	jsonPronto = listaProdutosEstab;
+	alert(jsonPronto);
+	console.log(jsonPronto);
       }         
         reader.readAsText(event.target.files[0]);
     });
 
-    function buscaProdutos (idProdutos,listaProdutos){
+    function buscaProdutos (nomeEstab, idProdutos,listaProdutos, categorias){
 
-      var resultadoProdutos = [];
-
+      var resultadoProdutos = "";
+			resultadoProdutos +=  "{"+ nomeEstab + ":{";
       for (var i = 0; i < listaProdutos.length; i++) {
       
         var index =  idProdutos.indexOf(listaProdutos[i].id);
         if (index != -1){
-
-          resultadoProdutos.push(listaProdutos[i]);
+        	
+            let categoria = buscaCategoria(listaProdutos[i].categoriesId,categorias);
+						
+            for (var j = 0; j < categoria.length; j++) {
+            	let preco = listaProdutos[i].price/100;
+            	resultadoProdutos += "{"+ categoria[j] + ":{"+ listaProdutos[i].name + ":" + preco + "}},";
+            }
         }
       }
+      resultadoProdutos = resultadoProdutos.substring(0, resultadoProdutos.length - 1);
+      resultadoProdutos +=  "}";
       return resultadoProdutos;
     }
+    
+    function buscaCategoria(idCategorias,categorias){
 
+      var resultadoCategorias = [];
 
-
-
-    /*
-    var requestURL = 'https://github.com/bmp85/teste/blob/b01f0a7047a494f997ce95b6b69941b77002d8ec/data.json';
-    var request = new XMLHttpRequest();
-    request.open('GET', requestURL);
-    request.responseType = 'json';
-    request.send();
-    request.onload = function() 
-   
-    {
-      var cardapioDigital = request.response;
-         showProducts(cardapioDigital);
+      for (var i = 0; i < categorias.length; i++) {
+        var index =  idCategorias.indexOf(categorias[i].id);
+        if (index != -1){
+        	
+          resultadoCategorias.push(categorias[i].name);
+        }
+      }
+      console.log(resultadoCategorias);
+      return resultadoCategorias;
     }
 
-function showProducts(jsonObj) {
-  var produtos = jsonObj['products'];
 
-  for (var i = 0; i < produtos.length; i++) {
-    var myArticle = document.createElement('article');
-    var myH2 = document.createElement('h2');
-    var myPara1 = document.createElement('p');
-    var myPara2 = document.createElement('p');
-    var myPara3 = document.createElement('p');
-    var myList = document.createElement('ul');
-
-    myH2.textContent = produtos[i].name;
-    myPara1.textContent = 'ID do produto ' + produtos[i].categoriesID;
-    myPara2.textContent = 'Preço: ' + produtos[i].price;
-    myPara3.textContent = 'Id:'+ produtos[i].id;
-
-    
-    myArticle.appendChild(myH2);
-    myArticle.appendChild(myPara1);
-    myArticle.appendChild(myPara2);
-    myArticle.appendChild(myPara3);
-    myArticle.appendChild(myList);
-
-    section.appendChild(myArticle);
-  }
-}
- */
 
     </script>
   </body>
