@@ -1,0 +1,63 @@
+<<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>Cardápio</title>
+
+ </head>
+
+  <body>
+
+      <header>
+
+      </header>
+
+      <section>
+
+      </section>
+
+    <script>
+    const header = document.querySelector('header');
+    const section = document.querySelector('section');
+    var requestURL = 'https://github.com/bmp85/teste/blob/b01f0a7047a494f997ce95b6b69941b77002d8ec/data.json';
+    var request = new XMLHttpRequest();
+    request.open('GET', requestURL);
+    request.responseType = 'json';
+    request.send();
+    request.onload = function() 
+    {
+      var cardapioDigital = request.response;
+         showProducts(cardapioDigital);
+    }
+
+function showProducts(jsonObj) {
+  var produtos = jsonObj['products'];
+
+  for (var i = 0; i < produtos.length; i++) {
+    var myArticle = document.createElement('article');
+    var myH2 = document.createElement('h2');
+    var myPara1 = document.createElement('p');
+    var myPara2 = document.createElement('p');
+    var myPara3 = document.createElement('p');
+    var myList = document.createElement('ul');
+
+    myH2.textContent = produtos[i].name;
+    myPara1.textContent = 'ID do produto ' + produtos[i].categoriesID;
+    myPara2.textContent = 'Preço: ' + produtos[i].price;
+    myPara3.textContent = 'Id:'+ produtos[i].id;
+
+    
+    myArticle.appendChild(myH2);
+    myArticle.appendChild(myPara1);
+    myArticle.appendChild(myPara2);
+    myArticle.appendChild(myPara3);
+    myArticle.appendChild(myList);
+
+    section.appendChild(myArticle);
+  }
+}
+
+    </script>
+  </body>
+</html>
